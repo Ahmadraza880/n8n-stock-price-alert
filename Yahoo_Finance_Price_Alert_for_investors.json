@@ -1,0 +1,182 @@
+{
+  "name": "Yahoo Finance Price Alert for investors",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -320,
+        -160
+      ],
+      "id": "3e5238dd-108c-4ae2-b4e8-931ec12511aa",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": "https://api.polygon.io/v2/aggs/ticker/AAPL/prev?adjusted=true&apiKey=SezWVT4Jrih3lPDHtGVJJB5q2bFmLlqC",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -120,
+        -80
+      ],
+      "id": "3f9e3cfe-9f54-43d7-b347-60e2373f87e5",
+      "name": "Yahoo Finance Api"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "916ed5f0-be93-47f7-b81f-e1d83cdcefd7",
+              "name": "=price",
+              "value": "={{$json[\"results\"][0][\"c\"]}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        60,
+        0
+      ],
+      "id": "d343f2ba-61da-4284-943a-5ba9b9dafd2a",
+      "name": "Extract the Close Price"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e4d2eef3-3e38-4ccd-9d7a-2d2c653727fd",
+              "leftValue": "={{ $('Yahoo Finance Api').item.json.results[0].c }}",
+              "rightValue": 225,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        240,
+        -60
+      ],
+      "id": "72f414bf-6034-42bf-8d35-81076eaf1422",
+      "name": "Compare Price to Target"
+    },
+    {
+      "parameters": {
+        "from": "+14155238886",
+        "to": "+923186158031",
+        "toWhatsapp": true,
+        "message": "=📈 Stock Alert! AAPL close price is now ${{$json[\"price\"]}} USD.",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [
+        460,
+        -160
+      ],
+      "id": "ecf565f7-1962-4076-a9ec-d784685a954f",
+      "name": "Send Alert",
+      "credentials": {
+        "twilioApi": {
+          "id": "jpYA5jT4xMz5OmAN",
+          "name": "Twilio account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Yahoo Finance Api",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Yahoo Finance Api": {
+      "main": [
+        [
+          {
+            "node": "Extract the Close Price",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract the Close Price": {
+      "main": [
+        [
+          {
+            "node": "Compare Price to Target",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compare Price to Target": {
+      "main": [
+        [
+          {
+            "node": "Send Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "eb98affb-ac75-4518-9799-d43fb163efe2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2de80f5914130ddac7b892de4e5de570f30cd22f0b2bd794e45e389d7524d1e9"
+  },
+  "id": "0i2zZO0fi1BhuUJl",
+  "tags": []
+}
