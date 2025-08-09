@@ -52,7 +52,7 @@ This workflow automatically checks a stock's latest **closing price** from the [
 ## 📸 Screenshots
 | Workflow in n8n | WhatsApp Alert |
 |-----------------|----------------|
-| ![Workflow](screenshotsworkflow-diagram.png) | ![Alert](screenshotswhatsapp-message.png) |
+| ![Workflow](screenshots/workflow-diagram.png) | ![Alert](screenshots/whatsapp-message.png) |
 
 ---
 
